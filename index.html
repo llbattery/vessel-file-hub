@@ -143,10 +143,11 @@ function openVoyageView() {
             "https://llbattery.github.io/Voyage/voyage10.html"
         ];
         
-        voyageLinks.forEach((link, index) => {
-            const voyageNum = index + 1;
+        // Loop in reverse order (from Voyage 10 down to Voyage 1)
+        for (let i = voyageLinks.length - 1; i >= 0; i--) {
+            const voyageNum = i + 1;
             const card = document.createElement('a');
-            card.href = link;
+            card.href = voyageLinks[i];
             card.target = "_blank";
             card.className = 'voyage-link-card';
             card.innerHTML = `
@@ -157,9 +158,8 @@ function openVoyageView() {
                 <div class="open-btn">Open &rarr;</div>
             `;
             voyageContainer.appendChild(card);
-        });
+        }
     }
-
     function goBackToCategories() {
         document.getElementById('fileView').style.display = 'none';
         document.getElementById('voyageView').style.display = 'none';
