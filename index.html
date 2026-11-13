@@ -121,7 +121,7 @@
         document.getElementById('resultsContainer').innerHTML = '<div class="loading" style="color: #888;">Type a keyword above and click Search.</div>';
     }
 
-    function openVoyageView() {
+function openVoyageView() {
         document.getElementById('categoryView').style.display = 'none';
         document.getElementById('fileView').style.display = 'none';
         document.getElementById('voyageView').style.display = 'block';
@@ -129,22 +129,35 @@
         const voyageContainer = document.getElementById('voyageListContainer');
         voyageContainer.innerHTML = '';
         
-        // Generate links for Voyage 1 through 10 pointing to your GitHub Pages URL structure
-        for (let i = 1; i <= 10; i++) {
+        // Your exact clean voyage links array
+        const voyageLinks = [
+            "https://llbattery.github.io/Voyage/voyage1.html",
+            "https://llbattery.github.io/Voyage/voyage2.html",
+            "https://llbattery.github.io/Voyage/voyage3.html",
+            "https://llbattery.github.io/Voyage/voyage4.html",
+            "https://llbattery.github.io/Voyage/voyage5.html",
+            "https://llbattery.github.io/Voyage/voyage6.html",
+            "https://llbattery.github.io/Voyage/voyage7.html",
+            "https://llbattery.github.io/Voyage/voyage8.html",
+            "https://llbattery.github.io/Voyage/voyage9.html",
+            "https://llbattery.github.io/Voyage/voyage10.html"
+        ];
+        
+        voyageLinks.forEach((link, index) => {
+            const voyageNum = index + 1;
             const card = document.createElement('a');
-            // Change this URL base if your voyage pages are hosted at a specific GitHub Pages subpath
-            card.href = `voyage${i}.html`;
+            card.href = link;
             card.target = "_blank";
             card.className = 'voyage-link-card';
             card.innerHTML = `
                 <div class="file-info">
-                    <div class="file-name">Voyage Plan ${i}</div>
-                    <div class="file-cat">Click to open voyage${i}.html</div>
+                    <div class="file-name">Voyage Plan ${voyageNum}</div>
+                    <div class="file-cat">Click to open voyage${voyageNum}.html</div>
                 </div>
                 <div class="open-btn">Open &rarr;</div>
             `;
             voyageContainer.appendChild(card);
-        }
+        });
     }
 
     function goBackToCategories() {
