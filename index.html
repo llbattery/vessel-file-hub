@@ -188,7 +188,8 @@ function openVoyageView() {
                     card.className = 'file-card';
                     card.innerHTML = `
                         <div class="file-info">
-                            <div class="file-name">${file.name}</div>
+                           <!-- <div class="file-name">${file.name}</div>-->
+                            <div class="file-name">${file.name.replace(/Data\.car$/i, '').trim()}</div>
                             <div class="file-cat">${file.category}</div>
                         </div>
                         <a href="${file.downloadUrl}" class="download-btn" target="_blank">
