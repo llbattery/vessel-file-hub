@@ -85,14 +85,14 @@
         <button class="back-btn" onclick="goBackToCategories()">&#8592; Back to Categories</button>
         <h2 id="currentCategoryTitle" style="color: #1a365d; margin-top: 5px; margin-bottom: 15px; font-size: 20px;"></h2>
         
-        <!-- Search Bar with Button -->
+        <!-- Search Bar with Button (Strictly manual search on click or Enter) -->
         <div class="search-container">
-            <input type="text" id="searchInput" class="search-box" placeholder="Type search keyword and click Search..." onkeydown="if(event.key === 'Enter') fetchFiles()">
+            <input type="text" id="searchInput" class="search-box" placeholder="Type keyword and click Search..." onkeydown="if(event.key === 'Enter') fetchFiles()">
             <button class="search-btn" onclick="fetchFiles()">Search</button>
         </div>
         
         <div id="resultsContainer">
-            <div class="loading">Loading files...</div>
+            <div class="loading" style="color: #888;">Type a keyword above and click Search to find files.</div>
         </div>
     </div>
 </div>
@@ -108,7 +108,8 @@
         document.getElementById('fileView').style.display = 'block';
         document.getElementById('currentCategoryTitle').innerText = activeCategory;
         document.getElementById('searchInput').value = '';
-        fetchFiles();
+        // Does NOT auto-fetch. Clears container and waits for button click.
+        document.getElementById('resultsContainer').innerHTML = '<div class="loading" style="color: #888;">Type a keyword above and click Search.</div>';
     }
 
     function goBackToCategories() {
