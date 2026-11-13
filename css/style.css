@@ -1,0 +1,261 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f3f6f9;
+    color: #263747;
+    min-height: 100vh;
+}
+
+/* Header */
+
+.header {
+    background: #102d49;
+    padding: 20px 8%;
+    color: white;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 21px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.ship-icon {
+    font-size: 27px;
+}
+
+/* Main container */
+
+.container {
+    max-width: 850px;
+    margin: 55px auto;
+    padding: 0 25px;
+}
+
+/* Welcome */
+
+.welcome {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.welcome h1 {
+    color: #102d49;
+    font-size: 34px;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+.welcome p {
+    color: #718096;
+    font-size: 15px;
+}
+
+/* Search */
+
+.search-section {
+    margin-bottom: 40px;
+}
+
+#searchInput {
+    width: 100%;
+    padding: 17px 22px;
+    border: 1px solid #d7e0e9;
+    border-radius: 9px;
+    background: white;
+    font-size: 16px;
+    outline: none;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+}
+
+#searchInput:focus {
+    border-color: #2876a5;
+    box-shadow: 0 0 0 3px rgba(40, 118, 165, 0.12);
+}
+
+/* Categories */
+
+.categories h2,
+.results-heading h2 {
+    font-size: 19px;
+    margin-bottom: 18px;
+    color: #263e55;
+}
+
+.category-card {
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    padding: 22px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: white;
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.category-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 18px rgba(0, 0, 0, 0.15);
+}
+
+.vessel {
+    background: #173d60;
+}
+
+.voyage {
+    background: #245b7c;
+}
+
+.misc {
+    background: #28765d;
+}
+
+.category-icon {
+    font-size: 35px;
+}
+
+.category-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.category-info strong {
+    font-size: 19px;
+}
+
+.category-info small {
+    font-size: 13px;
+    opacity: 0.85;
+}
+
+.arrow {
+    font-size: 32px;
+}
+
+/* Results */
+
+.results-section {
+    margin-top: 35px;
+}
+
+.results-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.back-button {
+    border: none;
+    background: #e2eaf1;
+    color: #173d60;
+    padding: 9px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.file-item {
+    background: white;
+    padding: 17px;
+    border: 1px solid #e0e7ee;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.file-item a {
+    color: #245b7c;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.file-item a:hover {
+    text-decoration: underline;
+}
+
+.file-type {
+    font-size: 12px;
+    color: #718096;
+}
+
+.empty-message {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    color: #718096;
+    text-align: center;
+}
+
+/* Status and footer */
+
+.status-message {
+    text-align: center;
+    margin-top: 30px;
+    color: #8997a5;
+    font-size: 13px;
+}
+
+footer {
+    text-align: center;
+    background: #102d49;
+    color: white;
+    padding: 20px;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+footer span {
+    display: block;
+    margin-top: 6px;
+    color: #b9ccde;
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+    .container {
+        margin: 35px auto;
+    }
+
+    .welcome h1 {
+        font-size: 26px;
+    }
+
+    .category-card {
+        padding: 17px;
+    }
+
+    .category-icon {
+        font-size: 27px;
+    }
+
+    .category-info strong {
+        font-size: 16px;
+    }
+
+    .category-info small {
+        font-size: 11px;
+    }
+}

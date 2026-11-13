@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vessel File Hub</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo">
+            <span class="ship-icon">⚓</span>
+            <span>VESSEL FILE HUB</span>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="welcome">
+            <h1>VESSEL FILE HUB</h1>
+            <p>Search and access maritime documents</p>
+        </section>
+
+        <section class="search-section">
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search files here..."
+                autocomplete="off"
+            >
+        </section>
+
+        <section class="categories">
+            <h2>Select Document Category</h2>
+
+            <button class="category-card vessel" data-category="vessel-files">
+                <span class="category-icon">🚢</span>
+                <span class="category-info">
+                    <strong>Vessel Files</strong>
+                    <small>Particulars, Hydrostatics, Hold Capacity</small>
+                </span>
+                <span class="arrow">›</span>
+            </button>
+
+            <button class="category-card voyage" data-category="voyage-plans">
+                <span class="category-icon">🧭</span>
+                <span class="category-info">
+                    <strong>Voyage Plans</strong>
+                    <small>Voyage planning documents</small>
+                </span>
+                <span class="arrow">›</span>
+            </button>
+
+            <button class="category-card misc" data-category="misc-excels">
+                <span class="category-icon">📊</span>
+                <span class="category-info">
+                    <strong>Miscellaneous Files</strong>
+                    <small>Excel, PDF, Word and other formats</small>
+                </span>
+                <span class="arrow">›</span>
+            </button>
+        </section>
+
+        <section class="results-section" id="resultsSection" hidden>
+            <div class="results-heading">
+                <h2 id="resultsTitle">Documents</h2>
+                <button id="backButton" class="back-button">← Back</button>
+            </div>
+
+            <div id="fileList" class="file-list"></div>
+        </section>
+
+        <p id="statusMessage" class="status-message">
+            Select a category to browse documents.
+        </p>
+
+    </main>
+
+    <footer>
+        VESSEL FILE HUB © 2026
+        <span>Maritime Document Library</span>
+    </footer>
+
+    <script src="js/search.js"></script>
+</body>
+</html>
