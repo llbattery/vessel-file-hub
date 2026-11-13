@@ -1,114 +1,160 @@
-const FOLDERS = {
-  "Vessel Files": "1aZxiuvh2vozEhBYWWZYROwS9VwoyY-A-",
-  "Voyage Files": "18jTuqx2uF9pR7fFCwJTg43a141f34bEh",
-  "Miscellaneous": "1kMFh_47hTqDXtQb_VCexcx-w4RJZyk0K"
-};
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vessel File Hub</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f9; padding: 30px; color: #333; margin: 0; }
+        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { color: #1a365d; margin-bottom: 5px; font-size: 26px; letter-spacing: 0.5px; }
+        .header p { color: #666; font-size: 14px; margin-top: 0; }
+        
+        /* Category Cards View */
+        .category-list { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
+        .cat-card { display: flex; align-items: center; justify-content: space-between; padding: 20px; border-radius: 10px; color: #fff; cursor: pointer; text-decoration: none; transition: transform 0.2s, opacity 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+        .cat-card:hover { transform: translateY(-2px); opacity: 0.95; }
+        .cat-card.vessel { background: #133b5c; }
+        .cat-card.voyage { background: #1d5f8a; }
+        .cat-card.misc { background: #1e5631; }
+        
+        .cat-info h3 { margin: 0 0 5px 0; font-size: 18px; }
+        .cat-info p { margin: 0; font-size: 13px; opacity: 0.85; }
+        .arrow { font-size: 20px; font-weight: bold; }
 
-function doGet(e) {
-  try {
-    var action = e.parameter.action;
-    
-    if (action === "search") {
-      var query = e.parameter.q ? e.parameter.q.toLowerCase().trim() : "";
-      var category = e.parameter.category || "All";
-      
-      if (category === "Voyage Plans") {
-        category = "Voyage Files";
-      }
-      
-      var results = [];
-      var foldersToSearch = [];
-      
-      if (category === "All" || !FOLDERS[category]) {
-        for (var cat in FOLDERS) {
-          foldersToSearch.push({name: cat, id: FOLDERS[cat]});
-        }
-      } else {
-        foldersToSearch.push({name: category, id: FOLDERS[category]});
-      }
-      
-      foldersToSearch.forEach(function(folderInfo) {
-        try {
-          var mainFolder = DriveApp.getFolderById(folderInfo.id);
-          searchFolderRecursive(mainFolder, query, folderInfo.name, results);
-        } catch (err) {
-          results.push({
-            name: "CRITICAL ERROR: " + err.message, 
-            category: folderInfo.name, 
-            downloadUrl: "#", 
-            viewUrl: "#"
-          });
-        }
-      });
-      
-      // TRAP: If query was empty and no files found at all, report a helpful notice
-      if (results.length === 0) {
-        results.push({
-          name: "NOTICE: Folder scanned successfully, but 0 files were found inside. Check if files are uploaded in subfolders!",
-          category: category,
-          downloadUrl: "#",
-          viewUrl: "#"
-        });
-      }
-      
-      return ContentService
-        .createTextOutput(JSON.stringify(results))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-    
-    return ContentService.createTextOutput(JSON.stringify({status: "Active"}))
-      .setMimeType(ContentService.MimeType.JSON);
-      
-  } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({error: err.message}))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
+        /* File View Section */
+        #fileView { display: none; }
+        .back-btn { background: none; border: none; color: #1a73e8; font-size: 14px; cursor: pointer; padding: 0; margin-bottom: 15px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        
+        /* Search Bar Layout */
+        .search-container { display: flex; gap: 10px; margin-bottom: 20px; }
+        .search-box { flex: 1; padding: 12px 15px; font-size: 15px; border: 1px solid #ccd0d5; border-radius: 8px; outline: none; box-sizing: border-box; }
+        .search-btn { background: #1a365d; color: #fff; border: none; padding: 0 20px; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
+        .search-btn:hover { background: #133b5c; }
+        
+        .file-card { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; background: #fff; }
+        .file-info .file-name { font-size: 15px; font-weight: bold; color: #111; margin-bottom: 3px; }
+        .file-info .file-cat { font-size: 12px; color: #666; }
+        .download-btn { background: #111; color: #fff; padding: 8px 16px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        .download-btn:hover { background: #333; }
+        
+        .loading, .no-results { text-align: center; color: #666; padding: 30px; font-size: 14px; }
+    </style>
+</head>
+<body>
 
-function searchFolderRecursive(folder, query, categoryName, results) {
-  try {
-    var files = folder.getFiles();
-    while (files.hasNext()) {
-      var file = files.next();
-      var fileName = file.getName();
-      var fileId = file.getId();
-      
-      var searchName = fileName.toLowerCase();
-      
-      if (categoryName === "Vessel Files") {
-        searchName = searchName
-          .replace(/\s+data\.car$/, "")
-          .replace(/\.car$/, "")
-          .trim();
-      }
-      
-      if (categoryName === "Voyage Files") {
-        searchName = searchName
-          .replace(/\.xls$/, "")
-          .trim();
-      }
-      
-      // If query is empty, it bypasses filtering and accepts ALL files
-      if (query === "" || searchName.indexOf(query) !== -1) {
-        results.push({
-          name: fileName,
-          category: categoryName,
-          downloadUrl: file.getUrl(),
-          viewUrl: file.getUrl()
-        });
-      }
+<div class="container">
+    <div class="header">
+        <h1>VESSEL FILE HUB</h1>
+        <p>Search and access maritime documents</p>
+    </div>
+
+    <!-- VIEW 1: Category Selection Cards -->
+    <div id="categoryView">
+        <h3 style="color: #333; font-size: 16px; margin-bottom: 15px;">Select Document Category</h3>
+        <div class="category-list">
+            <div class="cat-card vessel" onclick="selectCategory('Vessel Files')">
+                <div class="cat-info">
+                    <h3>🚢 Vessel Files</h3>
+                    <p>Particulars, Hydrostatics, Hold Capacity</p>
+                </div>
+                <div class="arrow">&rsaquo;</div>
+            </div>
+            
+            <div class="cat-card voyage" onclick="selectCategory('Voyage Files')">
+                <div class="cat-info">
+                    <h3>🧭 Voyage Plans</h3>
+                    <p>Voyage planning documents</p>
+                </div>
+                <div class="arrow">&rsaquo;</div>
+            </div>
+            
+            <div class="cat-card misc" onclick="selectCategory('Miscellaneous')">
+                <div class="cat-info">
+                    <h3>📁 Miscellaneous Files</h3>
+                    <p>Excel, PDF, Word and other formats</p>
+                </div>
+                <div class="arrow">&rsaquo;</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW 2: File Search & Results View -->
+    <div id="fileView">
+        <button class="back-btn" onclick="goBackToCategories()">&#8592; Back to Categories</button>
+        <h2 id="currentCategoryTitle" style="color: #1a365d; margin-top: 5px; margin-bottom: 15px; font-size: 20px;"></h2>
+        
+        <!-- Search Bar with Button -->
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-box" placeholder="Type search keyword and click Search..." onkeydown="if(event.key === 'Enter') fetchFiles()">
+            <button class="search-btn" onclick="fetchFiles()">Search</button>
+        </div>
+        
+        <div id="resultsContainer">
+            <div class="loading">Loading files...</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwiNgqfTSlknkKCXmKygNYNR8Ph6EJ7B2gPEpF0YCljvwtsNdUShrHfmeXBgzrUVvAqEA/exec";
+    
+    let activeCategory = "";
+
+    function selectCategory(categoryName) {
+        activeCategory = categoryName;
+        document.getElementById('categoryView').style.display = 'none';
+        document.getElementById('fileView').style.display = 'block';
+        document.getElementById('currentCategoryTitle').innerText = activeCategory;
+        document.getElementById('searchInput').value = '';
+        fetchFiles();
     }
-  } catch (fileErr) {
-    // Skip file iteration errors safely
-  }
-  
-  try {
-    var subfolders = folder.getFolders();
-    while (subfolders.hasNext()) {
-      var subfolder = subfolders.next();
-      searchFolderRecursive(subfolder, query, categoryName, results);
+
+    function goBackToCategories() {
+        document.getElementById('fileView').style.display = 'none';
+        document.getElementById('categoryView').style.display = 'block';
     }
-  } catch (subErr) {
-    // Skip subfolder traversal errors safely
-  }
-}
+
+    function fetchFiles() {
+        const query = document.getElementById('searchInput').value.trim();
+        const container = document.getElementById('resultsContainer');
+        
+        container.innerHTML = '<div class="loading">Searching files...</div>';
+        
+        const url = `${SCRIPT_URL}?action=search&q=${encodeURIComponent(query)}&category=${encodeURIComponent(activeCategory)}`;
+        
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                container.innerHTML = '';
+                
+                if (data.length === 0) {
+                    container.innerHTML = '<div class="no-results">No matching files found in this category.</div>';
+                    return;
+                }
+                
+                data.forEach(file => {
+                    const card = document.createElement('div');
+                    card.className = 'file-card';
+                    card.innerHTML = `
+                        <div class="file-info">
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-cat">${file.category}</div>
+                        </div>
+                        <a href="${file.downloadUrl}" class="download-btn" target="_blank">
+                            ⬇ Download
+                        </a>
+                    `;
+                    container.appendChild(card);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching files:', error);
+                container.innerHTML = '<div class="no-results" style="color: red;">Error connecting to file repository.</div>';
+            });
+    }
+</script>
+
+</body>
+</html>
