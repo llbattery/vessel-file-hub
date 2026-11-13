@@ -1,88 +1,159 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vessel File Hub</title>
-    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f9; padding: 30px; color: #333; margin: 0; }
+        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { color: #1a365d; margin-bottom: 5px; font-size: 26px; letter-spacing: 0.5px; }
+        .header p { color: #666; font-size: 14px; margin-top: 0; }
+        
+        /* Category Cards View */
+        .category-list { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
+        .cat-card { display: flex; align-items: center; justify-content: space-between; padding: 20px; border-radius: 10px; color: #fff; cursor: pointer; text-decoration: none; transition: transform 0.2s, opacity 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+        .cat-card:hover { transform: translateY(-2px); opacity: 0.95; }
+        .cat-card.vessel { background: #133b5c; }
+        .cat-card.voyage { background: #1d5f8a; }
+        .cat-card.misc { background: #1e5631; }
+        
+        .cat-info h3 { margin: 0 0 5px 0; font-size: 18px; }
+        .cat-info p { margin: 0; font-size: 13px; opacity: 0.85; }
+        .arrow { font-size: 20px; font-weight: bold; }
+
+        /* File View Section */
+        #fileView { display: none; }
+        .back-btn { background: none; border: none; color: #1a73e8; font-size: 14px; cursor: pointer; padding: 0; margin-bottom: 15px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        .search-box { width: 100%; padding: 12px 15px; font-size: 15px; border: 1px solid #ccd0d5; border-radius: 8px; outline: none; box-sizing: border-box; margin-bottom: 20px; }
+        
+        .file-card { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; background: #fff; }
+        .file-info .file-name { font-size: 15px; font-weight: bold; color: #111; margin-bottom: 3px; }
+        .file-info .file-cat { font-size: 12px; color: #666; }
+        .download-btn { background: #111; color: #fff; padding: 8px 16px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        .download-btn:hover { background: #333; }
+        
+        .loading, .no-results { text-align: center; color: #666; padding: 30px; font-size: 14px; }
+    </style>
 </head>
 <body>
 
-    <header class="header">
-        <div class="logo">
-            <span class="ship-icon">⚓</span>
-            <span>VESSEL FILE HUB</span>
-        </div>
-    </header>
+<div class="container">
+    <div class="header">
+        <h1>VESSEL FILE HUB</h1>
+        <p>Search and access maritime documents</p>
+    </div>
 
-    <main class="container">
-
-        <section class="welcome">
-            <h1>VESSEL FILE HUB</h1>
-            <p>Search and access maritime documents</p>
-        </section>
-
-        <section class="search-section">
-            <input
-                type="text"
-                id="searchInput"
-                placeholder="Search files here..."
-                autocomplete="off"
-            >
-        </section>
-
-        <section class="categories">
-            <h2>Select Document Category</h2>
-
-            <button class="category-card vessel" data-category="vessel-files">
-                <span class="category-icon">🚢</span>
-                <span class="category-info">
-                    <strong>Vessel Files</strong>
-                    <small>Particulars, Hydrostatics, Hold Capacity</small>
-                </span>
-                <span class="arrow">›</span>
-            </button>
-
-            <button class="category-card voyage" data-category="voyage-plans">
-                <span class="category-icon">🧭</span>
-                <span class="category-info">
-                    <strong>Voyage Plans</strong>
-                    <small>Voyage planning documents</small>
-                </span>
-                <span class="arrow">›</span>
-            </button>
-
-            <button class="category-card misc" data-category="misc-excels">
-                <span class="category-icon">📊</span>
-                <span class="category-info">
-                    <strong>Miscellaneous Files</strong>
-                    <small>Excel, PDF, Word and other formats</small>
-                </span>
-                <span class="arrow">›</span>
-            </button>
-        </section>
-
-        <section class="results-section" id="resultsSection" hidden>
-            <div class="results-heading">
-                <h2 id="resultsTitle">Documents</h2>
-                <button id="backButton" class="back-button">← Back</button>
+    <!-- VIEW 1: Category Selection Cards -->
+    <div id="categoryView">
+        <h3 style="color: #333; font-size: 16px; margin-bottom: 15px;">Select Document Category</h3>
+        <div class="category-list">
+            <div class="cat-card vessel" onclick="selectCategory('Vessel Files')">
+                <div class="cat-info">
+                    <h3>🚢 Vessel Files</h3>
+                    <p>Particulars, Hydrostatics, Hold Capacity</p>
+                </div>
+                <div class="arrow">&rsaquo;</div>
             </div>
+            
+            <div class="cat-card voyage" onclick="selectCategory('Voyage Files')">
+                <div class="cat-info">
+                    <h3>🧭 Voyage Plans</h3>
+                    <p>Voyage planning documents</p>
+                </div>
+                <div class="arrow">&rsaquo;</div>
+            </div>
+            
+            <div class="cat-card misc" onclick="selectCategory('Miscellaneous')">
+                <div class="cat-info">
+                    <h3>📁 Miscellaneous Files</h3>
+                    <p>Excel, PDF, Word and other formats</p>
+                </div>
+                <div class="arrow">&rsaquo;</div>
+            </div>
+        </div>
+    </div>
 
-            <div id="fileList" class="file-list"></div>
-        </section>
+    <!-- VIEW 2: File Search & Results View -->
+    <div id="fileView">
+        <button class="back-btn" onclick="goBackToCategories()">&#8592; Back to Categories</button>
+        <h2 id="currentCategoryTitle" style="color: #1a365d; margin-top: 5px; margin-bottom: 15px; font-size: 20px;"></h2>
+        
+        <input type="text" id="searchInput" class="search-box" placeholder="Search files here..." onkeyup="debounceSearch()">
+        
+        <div id="resultsContainer">
+            <div class="loading">Loading files...</div>
+        </div>
+    </div>
+</div>
 
-        <p id="statusMessage" class="status-message">
-            Select a category to browse documents.
-        </p>
+<script>
+    // PASTE YOUR DEPLOYED GOOGLE APPS SCRIPT WEB APP URL HERE
+    const SCRIPT_URL = "https://script.google.com/home/projects/1EyPQ_3tFyHBehTZqj-oO4l9PH6V8NmrgN2IF8_shB8e4rc3P0YfNUHdM/edit";
+    
+    let activeCategory = "";
+    let debounceTimer;
 
-    </main>
+    function selectCategory(categoryName) {
+        activeCategory = categoryName;
+        document.getElementById('categoryView').style.display = 'none';
+        document.getElementById('fileView').style.display = 'block';
+        document.getElementById('currentCategoryTitleinnerText') = activeCategory;
+        document.getElementById('currentCategoryTitle').innerText = activeCategory;
+        document.getElementById('searchInput').value = '';
+        fetchFiles();
+    }
 
-    <footer>
-        VESSEL FILE HUB © 2026
-        <span>Maritime Document Library</span>
-    </footer>
+    function goBackToCategories() {
+        document.getElementById('fileView').style.display = 'none';
+        document.getElementById('categoryView').style.display = 'block';
+    }
 
-    <script src="js/search.js"></script>
+    function debounceSearch() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(fetchFiles, 300);
+    }
+
+    function fetchFiles() {
+        const query = document.getElementById('searchInput').value.trim();
+        const container = document.getElementById('resultsContainer');
+        
+        container.innerHTML = '<div class="loading">Searching files...</div>';
+        
+        const url = `${SCRIPT_URL}?action=search&q=${encodeURIComponent(query)}&category=${encodeURIComponent(activeCategory)}`;
+        
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                container.innerHTML = '';
+                
+                if (data.length === 0) {
+                    container.innerHTML = '<div class="no-results">No matching files found in this category.</div>';
+                    return;
+                }
+                
+                data.forEach(file => {
+                    const card = document.createElement('div');
+                    card.className = 'file-card';
+                    card.innerHTML = `
+                        <div class="file-info">
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-cat">${file.category}</div>
+                        </div>
+                        <a href="${file.downloadUrl}" class="download-btn" target="_blank">
+                            ⬇ Download
+                        </a>
+                    `;
+                    container.appendChild(card);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching files:', error);
+                container.innerHTML = '<div class="no-results" style="color: red;">Error connecting to file repository.</div>';
+            });
+    }
+</script>
+
 </body>
 </html>
