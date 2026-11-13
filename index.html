@@ -48,7 +48,7 @@
 <div class="container">
     <div class="header">
         <h1>VESSEL FILE HUB</h1>
-        <p>Search and download vessel file</p>
+        <p>Search and download vessel files</p>
     </div>
 
     <!-- VIEW 1: Category Selection Cards -->
@@ -169,7 +169,7 @@ function openVoyageView() {
         const query = document.getElementById('searchInput').value.trim();
         const container = document.getElementById('resultsContainer');
         
-        container.innerHTML = '<div class="loading">Searching files...</div>';
+        container.innerHTML = '<div class="loading">Searching files.. this may take a while.</div>';
         
         const url = `${SCRIPT_URL}?action=search&q=${encodeURIComponent(query)}&category=${encodeURIComponent(activeCategory)}`;
         
