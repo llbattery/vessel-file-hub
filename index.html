@@ -89,7 +89,6 @@
 </div>
 
 <script>
-    // PASTE YOUR DEPLOYED GOOGLE APPS SCRIPT WEB APP URL HERE
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwiNgqfTSlknkKCXmKygNYNR8Ph6EJ7B2gPEpF0YCljvwtsNdUShrHfmeXBgzrUVvAqEA/exec";
     
     let activeCategory = "";
@@ -99,7 +98,6 @@
         activeCategory = categoryName;
         document.getElementById('categoryView').style.display = 'none';
         document.getElementById('fileView').style.display = 'block';
-        document.getElementById('currentCategoryTitleinnerText') = activeCategory;
         document.getElementById('currentCategoryTitle').innerText = activeCategory;
         document.getElementById('searchInput').value = '';
         fetchFiles();
