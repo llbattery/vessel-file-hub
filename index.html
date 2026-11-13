@@ -48,7 +48,7 @@
 <div class="container">
     <div class="header">
         <h1>VESSEL FILE HUB</h1>
-        <p>Search and access maritime documents</p>
+        <p>Search and download vessel file</p>
     </div>
 
     <!-- VIEW 1: Category Selection Cards -->
@@ -92,7 +92,7 @@
         </div>
         
         <div id="resultsContainer">
-            <div class="loading" style="color: #888;">Type a keyword above and click Search.</div>
+            <div class="loading" style="color: #888;">Type the vessel name above and click Search.</div>
         </div>
     </div>
 
@@ -118,7 +118,7 @@
         document.getElementById('fileView').style.display = 'block';
         document.getElementById('currentCategoryTitle').innerText = activeCategory;
         document.getElementById('searchInput').value = '';
-        document.getElementById('resultsContainer').innerHTML = '<div class="loading" style="color: #888;">Type a keyword above and click Search.</div>';
+        document.getElementById('resultsContainer').innerHTML = '<div class="loading" style="color: #888;">Type the vessel name above and click Search.</div>';
     }
 
 function openVoyageView() {
