@@ -23,8 +23,8 @@
         .cat-info p { margin: 0; font-size: 13px; opacity: 0.85; }
         .arrow { font-size: 20px; font-weight: bold; }
 
-        /* File View Section */
-        #fileView { display: none; }
+        /* Views */
+        #fileView, #voyageView { display: none; }
         .back-btn { background: none; border: none; color: #1a73e8; font-size: 14px; cursor: pointer; padding: 0; margin-bottom: 15px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
         
         /* Search Bar Layout */
@@ -33,11 +33,12 @@
         .search-btn { background: #1a365d; color: #fff; border: none; padding: 0 20px; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
         .search-btn:hover { background: #133b5c; }
         
-        .file-card { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; background: #fff; }
+        .file-card, .voyage-link-card { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; background: #fff; text-decoration: none; color: inherit; }
+        .voyage-link-card:hover { background: #f8fafc; }
         .file-info .file-name { font-size: 15px; font-weight: bold; color: #111; margin-bottom: 3px; }
         .file-info .file-cat { font-size: 12px; color: #666; }
-        .download-btn { background: #111; color: #fff; padding: 8px 16px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
-        .download-btn:hover { background: #333; }
+        .download-btn, .open-btn { background: #111; color: #fff; padding: 8px 16px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        .download-btn:hover, .open-btn:hover { background: #333; }
         
         .loading, .no-results { text-align: center; color: #666; padding: 30px; font-size: 14px; }
     </style>
@@ -62,10 +63,10 @@
                 <div class="arrow">&rsaquo;</div>
             </div>
             
-            <div class="cat-card voyage" onclick="selectCategory('Voyage Files')">
+            <div class="cat-card voyage" onclick="openVoyageView()">
                 <div class="cat-info">
                     <h3>🧭 Voyage Plans</h3>
-                    <p>Voyage planning documents</p>
+                    <p>Access individual voyage files (Voyage 1 - 10)</p>
                 </div>
                 <div class="arrow">&rsaquo;</div>
             </div>
@@ -80,19 +81,27 @@
         </div>
     </div>
 
-    <!-- VIEW 2: File Search & Results View -->
+    <!-- VIEW 2: File Search View (Vessel & Misc) -->
     <div id="fileView">
         <button class="back-btn" onclick="goBackToCategories()">&#8592; Back to Categories</button>
         <h2 id="currentCategoryTitle" style="color: #1a365d; margin-top: 5px; margin-bottom: 15px; font-size: 20px;"></h2>
         
-        <!-- Search Bar with Button (Strictly manual search on click or Enter) -->
         <div class="search-container">
             <input type="text" id="searchInput" class="search-box" placeholder="Type keyword and click Search..." onkeydown="if(event.key === 'Enter') fetchFiles()">
             <button class="search-btn" onclick="fetchFiles()">Search</button>
         </div>
         
         <div id="resultsContainer">
-            <div class="loading" style="color: #888;">Type a keyword above and click Search to find files.</div>
+            <div class="loading" style="color: #888;">Type a keyword above and click Search.</div>
+        </div>
+    </div>
+
+    <!-- VIEW 3: Voyage Plans List View -->
+    <div id="voyageView">
+        <button class="back-btn" onclick="goBackToCategories()">&#8592; Back to Categories</button>
+        <h2 style="color: #1a365d; margin-top: 5px; margin-bottom: 15px; font-size: 20px;">🧭 Voyage Plans Directory</h2>
+        <div id="voyageListContainer">
+            <!-- Dynamically populated voyage links 1 to 10 -->
         </div>
     </div>
 </div>
@@ -105,15 +114,42 @@
     function selectCategory(categoryName) {
         activeCategory = categoryName;
         document.getElementById('categoryView').style.display = 'none';
+        document.getElementById('voyageView').style.display = 'none';
         document.getElementById('fileView').style.display = 'block';
         document.getElementById('currentCategoryTitle').innerText = activeCategory;
         document.getElementById('searchInput').value = '';
-        // Does NOT auto-fetch. Clears container and waits for button click.
         document.getElementById('resultsContainer').innerHTML = '<div class="loading" style="color: #888;">Type a keyword above and click Search.</div>';
+    }
+
+    function openVoyageView() {
+        document.getElementById('categoryView').style.display = 'none';
+        document.getElementById('fileView').style.display = 'none';
+        document.getElementById('voyageView').style.display = 'block';
+        
+        const voyageContainer = document.getElementById('voyageListContainer');
+        voyageContainer.innerHTML = '';
+        
+        // Generate links for Voyage 1 through 10 pointing to your GitHub Pages URL structure
+        for (let i = 1; i <= 10; i++) {
+            const card = document.createElement('a');
+            // Change this URL base if your voyage pages are hosted at a specific GitHub Pages subpath
+            card.href = `voyage${i}.html`;
+            card.target = "_blank";
+            card.className = 'voyage-link-card';
+            card.innerHTML = `
+                <div class="file-info">
+                    <div class="file-name">Voyage Plan ${i}</div>
+                    <div class="file-cat">Click to open voyage${i}.html</div>
+                </div>
+                <div class="open-btn">Open &rarr;</div>
+            `;
+            voyageContainer.appendChild(card);
+        }
     }
 
     function goBackToCategories() {
         document.getElementById('fileView').style.display = 'none';
+        document.getElementById('voyageView').style.display = 'none';
         document.getElementById('categoryView').style.display = 'block';
     }
 
